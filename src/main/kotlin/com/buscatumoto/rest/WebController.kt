@@ -38,6 +38,7 @@ class WebController {
 		return customer
 	}
 	
+	//test git
 	@GetMapping("/get")
 	fun getCustomer(@RequestParam("id") id: Long): CustomerModel? {
 		return customerStores.get(id)
