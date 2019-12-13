@@ -23,6 +23,12 @@ class MotoController(val motoService: MotoService) {
 		return motoService.getAll(pageable)
 	}
 	
+	@GetMapping("/brand/{brand}")
+	fun getByBrand(@PathVariable brand: String): List<Moto> {
+		return motoService.getByBrand(brand)
+	}
+	
+	
 	@GetMapping("{id}")
 	fun getById(@PathVariable id: String): Optional<Moto> {
 		return motoService.getById(id)

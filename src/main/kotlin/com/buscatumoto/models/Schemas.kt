@@ -1,11 +1,14 @@
 package com.buscatumoto.models
 
-data class Brand(val id: String,val name: String)
+import org.springframework.data.mongodb.core.mapping.Document
 
-data class Moto(val id: String, var brand: Brand, val model: String, val imgThumbUrl: String,
-					val modelHighlights: String, val imgBannerUrl: String,
-					val modelDetailHighlights: List<String>, val priceTitle: String, val priceDesc: String,
-					val mainDesc: String, val licenses: List<String>, val licensesTitle: String,
-					val specsTable: List<List<String>>, val relatedItems: List<String>,
-					val relatedItemsUrl: List<String>) {
+data class Brand(var id: String?,var name: String?)
+
+@Document(collection = "motos")
+class Moto(var id: String?, var brand: String?, var model: String?, var imgThumbUrl: String?,
+					var modelHighlights: String?, var imgBannerUrl: String?,
+					var modelDetailHighlights: List<String?>, var priceTitle: String?, var priceDesc: String?,
+					var mainDesc: String?, var licenses: List<String?>, var licensesTitle: String?,
+					var specsTable: List<List<String?>>, var relatedItems: List<String?>,
+					var relatedItemsUrl: List<String?>) {
 }
