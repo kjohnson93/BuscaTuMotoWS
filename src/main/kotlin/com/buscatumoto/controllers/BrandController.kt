@@ -35,11 +35,7 @@ class BrandController(val brandService: BrandService) {
 		brandService.insert(brand)
 	}
 	//putBrand
-	@PutMapping
-	fun update(@RequestBody brand: Brand) {
-		brandService.update(brand)
-	}
-	
+
 	//deleteBrand
 	@DeleteMapping("{id}")
 	fun delete(@PathVariable id: String): Optional<Brand> {

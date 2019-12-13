@@ -44,36 +44,36 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 		return motoDAO.insert(obj)
 	}
 
-	override fun update(obj: Moto): Moto {
-//		return motoDAO.
-		//upsert
-//		motoDAO.findById(obj.id)?.let {
-//			
-//			
-//			
-//		} ?: run {
-//			throw object: Exception("Trying to update a moto that does not exist.") {}
-//		}
-//		motoDAO.findById(obj.id).let {
-//			
-//			it.ifPresent {
-//				return it
-//			}
-//			
-//			
-//		} ?: run {
-//			throw object: Exception("Trying to update a moto that does not exist.") {}
+//	override fun update(obj: Moto): Moto {
+////		return motoDAO.
+//		//upsert
+////		motoDAO.findById(obj.id)?.let {
+////			
+////			
+////			
+////		} ?: run {
+////			throw object: Exception("Trying to update a moto that does not exist.") {}
+////		}
+////		motoDAO.findById(obj.id).let {
+////			
+////			it.ifPresent {
+////				return it
+////			}
+////			
+////			
+////		} ?: run {
+////			throw object: Exception("Trying to update a moto that does not exist.") {}
+////		}
+////
+//		if (motoDAO.existsById(obj.id)) {
+//			//re insert brand from db to avoid inconsistency
+//			return motoDAO.save(obj)
+//		} else {
+//			throw object : Exception("Trying to update a moto that does not exist.") {}
+//
 //		}
 //
-		if (motoDAO.existsById(obj.id)) {
-			//re insert brand from db to avoid inconsistency
-			return motoDAO.save(obj)
-		} else {
-			throw object : Exception("Trying to update a moto that does not exist.") {}
-
-		}
-
-	}
+//	}
 
 	override fun deleteById(id: String): Optional<Moto> {
 //		motoDAO.findById(id)?.let {

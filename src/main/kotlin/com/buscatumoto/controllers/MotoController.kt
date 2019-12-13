@@ -39,10 +39,7 @@ class MotoController(val motoService: MotoService) {
 		return motoService.insert(moto)
 	}
 
-	@PutMapping	
-	fun update(@RequestBody moto: Moto): Moto {
-		return motoService.update(moto)
-	}
+
 	
 	@DeleteMapping("{id}")
 	fun delete(@PathVariable id: String): Optional<Moto> {

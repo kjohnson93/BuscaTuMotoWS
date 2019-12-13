@@ -22,22 +22,22 @@ class BrandService(val brandDAO:BrandDAO, val motoDAO: MotoDAO) : BasicCrud<Stri
 		return brandDAO.insert(obj)
 	}
 
-	override fun update(obj: Brand): Brand {
-		//mongodb only update instead of upsert:
-		brandDAO.findById(obj.id)?.let {
-			//update
-			//first update all his bikes
-			motoDAO.saveAll(motoDAO.findByBrand(obj.id!!).map {
-				it.also {
-					it.brand = obj.id
-				}
-			})
-			return brandDAO.save(obj)
-		} ?: run {
-			throw object: Exception ("Trying to update an object that does not exist.") {}
-		}
-	
-	}
+//	override fun update(obj: Brand): Brand {
+//		//mongodb only update instead of upsert:
+//		brandDAO.findById(obj.id)?.let {
+//			//update
+//			//first update all his bikes
+//			motoDAO.saveAll(motoDAO.findByBrand(obj.id!!).map {
+//				it.also {
+//					it.brand = obj.id
+//				}
+//			})
+//			return brandDAO.save(obj)
+//		} ?: run {
+//			throw object: Exception ("Trying to update an object that does not exist.") {}
+//		}
+//	
+//	}
 
 	override fun deleteById(id: String): Optional<Brand> {
 		return brandDAO.findById(id).apply {
