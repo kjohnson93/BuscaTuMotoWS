@@ -13,26 +13,35 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.RequestParam
 
 @RestController
 @RequestMapping("api/moto")
 class MotoController(val motoService: MotoService) {
 	
-	@GetMapping
-	fun getAll(pageable: Pageable): Page<Moto> {
-		return motoService.getAll(pageable)
-	}
 	
 	@GetMapping("/brand/{brand}")
 	fun getByBrand(@PathVariable brand: String): List<Moto> {
 		return motoService.getByBrand(brand)
 	}
 	
-	
 	@GetMapping("{id}")
-	fun getById(@PathVariable id: String): Optional<Moto> {
+	fun getById(@PathVariable id: String): Moto? {
 		return motoService.getById(id)
 	}
+	
+	@GetMapping("/search/{search}")
+	fun getBySearch(@PathVariable search: String): List<Moto> {
+		return motoService.getBySearch(search)
+	}
+	
+	@GetMapping()
+	fun getByLicense(@RequestParam("lic") license: String): List<Moto> {
+		return motoService.getByLicense(license)
+	}
+	
+	
+	//test methods
 	
 	@PostMapping
 	fun insert(@RequestBody moto: Moto): Moto {

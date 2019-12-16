@@ -35,11 +35,44 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 		return result
 	}
 
-	override fun getById(id: String): Optional<Moto> {
-		return motoDAO.findById(id)
+	fun getById(id: String): Moto? {
+
+		var criteria: Criteria = Criteria.where("_id").`is`(id)
+		var query = Query(criteria)
+		val result = mongoTemplate.findOne(query, Moto::class.java)
+		
+		return result
+	
+		}
+
+	fun getBySearch(search: String) : List<Moto> {
+		
+		var criteria: Criteria = Criteria.where("model").regex(search, "i")
+		var query = Query(criteria)
+		
+		var result = mongoTemplate.find(query, Moto::class.java)
+		
+		return result
+			
+	}
+	
+	fun getByLicense(license: String): List<Moto> {
+		
+//		var criteria: Criteria = Criteria.where("model")
+		val criteria = Criteria.where("licenses").all(license)
+		var query = Query(criteria)
+		var result = mongoTemplate.find(query, Moto::class.java)
+
+		return result
 	}
 
-
+	
+	
+	
+	
+	
+	//test methods
+	
 	override fun insert(obj: Moto): Moto {
 		return motoDAO.insert(obj)
 	}

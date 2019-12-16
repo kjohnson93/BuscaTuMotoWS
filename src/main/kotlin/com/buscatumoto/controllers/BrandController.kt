@@ -24,11 +24,7 @@ class BrandController(val brandService: BrandService) {
 	fun getAll(pageable: Pageable) : Page<Brand> {
 	 	return brandService.getAll(pageable)
 	}
-	//getBrandById
-	@GetMapping("{id}")
-	fun getBrandById(@PathVariable id: String): Optional<Brand> {
-		return brandService.getById(id)
-	}
+
 	//postBrand
 	@PostMapping
 	fun insert(@RequestBody brand: Brand) {

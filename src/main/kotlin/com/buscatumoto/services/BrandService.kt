@@ -14,9 +14,6 @@ class BrandService(val brandDAO:BrandDAO, val motoDAO: MotoDAO) : BasicCrud<Stri
 		return brandDAO.findAll(pageable)
 	}
 
-	override fun getById(id: String): Optional<Brand> {
-		return brandDAO.findById(id)
-	}
 
 	override fun insert(obj: Brand): Brand {
 		return brandDAO.insert(obj)
