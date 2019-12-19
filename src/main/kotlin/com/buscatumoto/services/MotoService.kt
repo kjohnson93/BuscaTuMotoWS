@@ -34,6 +34,24 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 		
 		return result
 	}
+	
+	
+	//test
+//	fun getLicenseTitle(id: String): String {
+//		
+//		var criteria: Criteria = Criteria.where("id").`is`(id)
+//		var query = Query(criteria)
+//		val result = mongoTemplate.findOne(query, Moto::class.java)
+//
+//		return result.licensesTitle
+//		
+//	}
+	
+		fun getLicenseTitle(id: String): String {
+		
+		return motoDAO.findById(id).get().licensesTitle
+		
+	}
 
 	override fun getById(id: String): Optional<Moto> {
 		return motoDAO.findById(id)

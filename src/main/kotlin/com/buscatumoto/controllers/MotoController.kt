@@ -34,6 +34,14 @@ class MotoController(val motoService: MotoService) {
 		return motoService.getById(id)
 	}
 	
+	@GetMapping("/license/{id}")
+	fun getLicenseTitle(@PathVariable id: String) : String {
+		return motoService.getLicenseTitle(id)
+	}
+	
+	
+	
+	
 	@PostMapping
 	fun insert(@RequestBody moto: Moto): Moto {
 		return motoService.insert(moto)
