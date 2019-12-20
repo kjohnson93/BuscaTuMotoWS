@@ -26,10 +26,16 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 	fun getByBrand(brand: String): List<Moto> {
 		
 		var criteria: Criteria = Criteria.where("brand").`is`(brand)
-		
 		var query = Query(criteria)
-
+		val result = mongoTemplate.find(query, Moto::class.java)
 		
+		return result
+	}
+	
+	fun getByBikeType(bikeType: String): List<Moto> {
+		
+		var criteria: Criteria = Criteria.where("bikeType").`is`(bikeType)
+		var query = Query(criteria)
 		val result = mongoTemplate.find(query, Moto::class.java)
 		
 		return result
@@ -37,21 +43,26 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 	
 	
 	//test
-//	fun getLicenseTitle(id: String): String {
-//		
-//		var criteria: Criteria = Criteria.where("id").`is`(id)
-//		var query = Query(criteria)
-//		val result = mongoTemplate.findOne(query, Moto::class.java)
-//
-//		return result.licensesTitle
-//		
-//	}
-	
-		fun getLicenseTitle(id: String): String {
+	fun getLicenseTitle(id: String): String {
 		
-		return motoDAO.findById(id).get().licensesTitle
+		var criteria: Criteria = Criteria.where("id").`is`(id)
+		var query = Query(criteria)
+		val result = mongoTemplate.findOne(query, Moto::class.java)
+		
+		result?.let {
+			return it.licensesTitle
+		} ?: run {
+			return ""
+		}
+
 		
 	}
+	
+//	fun getLicenseTitle(id: String): String {
+//		
+//		return motoDAO.findById(id).get().licensesTitle
+//		
+//	}
 
 	override fun getById(id: String): Optional<Moto> {
 		return motoDAO.findById(id)

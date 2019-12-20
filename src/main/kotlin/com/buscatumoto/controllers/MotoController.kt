@@ -28,6 +28,10 @@ class MotoController(val motoService: MotoService) {
 		return motoService.getByBrand(brand)
 	}
 	
+	@GetMapping("/bikeType/{bikeType}")
+	fun getByBikeType(@PathVariable bikeType: String): List<Moto>{
+		return motoService.getByBikeType(bikeType)
+	}
 	
 	@GetMapping("{id}")
 	fun getById(@PathVariable id: String): Optional<Moto> {
