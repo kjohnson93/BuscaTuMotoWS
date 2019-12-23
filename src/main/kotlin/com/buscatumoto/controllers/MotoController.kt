@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.data.mongodb.core.aggregation.ArithmeticOperators.Log
 
 @RestController
 @RequestMapping("api/moto")
@@ -41,6 +43,15 @@ class MotoController(val motoService: MotoService) {
 	@GetMapping("/license/{id}")
 	fun getLicenseTitle(@PathVariable id: String) : String {
 		return motoService.getLicenseTitle(id)
+	}
+	
+	@GetMapping("/filter")
+	fun filter(@RequestParam("brand") brand: String, @RequestParam("model") model: String,
+			   @RequestParam("tipo") tipo: String, @RequestParam("precio") precio: String,
+			   @RequestParam("precio_d") precio_d: String, @RequestParam("precio_u") precio_u: String,
+			   @RequestParam("cil_d") cil_d: String, @RequestParam("cil_u") cil_u: String,
+			   @RequestParam("year") year: String, @RequestParam("a2") a2: String): List<Moto> {
+		return motoService.filter(brand, model, tipo, precio, precio_d, precio_u, cil_d, cil_u, year, a2)
 	}
 	
 	

@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Field
 
 data class Brand(var id: String?,var name: String?)
 
-@Document(collection = "motos_copy")
+@Document(collection = "motos")
 data class Moto(@Id var id: String? = null, var bikeType: String = "", var brand: String = "",
 					var price: String = "", var model: String = "", var imgThumbUrl: String = "",
 					var modelHighlights: String = "", var imgBannerUrl: String = "",

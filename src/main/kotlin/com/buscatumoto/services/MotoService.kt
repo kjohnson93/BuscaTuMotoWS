@@ -24,7 +24,6 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 	}
 	
 	fun getByBrand(brand: String): List<Moto> {
-		
 		var criteria: Criteria = Criteria.where("brand").`is`(brand)
 		var query = Query(criteria)
 		val result = mongoTemplate.find(query, Moto::class.java)
@@ -33,7 +32,6 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 	}
 	
 	fun getByBikeType(bikeType: String): List<Moto> {
-		
 		var criteria: Criteria = Criteria.where("bikeType").`is`(bikeType)
 		var query = Query(criteria)
 		val result = mongoTemplate.find(query, Moto::class.java)
@@ -41,6 +39,21 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 		return result
 	}
 	
+	fun filter(brand: String, model: String,
+			    tipo: String, precio: String,
+			    precio_d: String, precio_u: String,
+			    cil_d: String, cil_u: String,
+			    year: String, a2: String): List<Moto> {
+		
+		//Validation
+		
+		var criteria: Criteria = Criteria.where("brand").`is`(brand)
+		var query = Query(criteria)
+		val result = mongoTemplate.find(query, Moto::class.java)
+		
+		return result
+		
+	}
 	
 	//test
 	fun getLicenseTitle(id: String): String {
