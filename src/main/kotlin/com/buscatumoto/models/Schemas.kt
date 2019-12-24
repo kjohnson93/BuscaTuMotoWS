@@ -8,7 +8,10 @@ data class Brand(var id: String?,var name: String?)
 
 @Document(collection = "motos")
 data class Moto(@Id var id: String? = null, var bikeType: String = "", var brand: String = "",
-					var price: String = "", var model: String = "", var imgThumbUrl: String = "",
+					var model: String = "", var price: Int = 0,
+					var power: Int = 0, var displacement: Float = 0f,
+					var weight: Float = 0f, var year: Int = 0,
+					var imgThumbUrl: String = "",
 					var modelHighlights: String = "", var imgBannerUrl: String = "",
 					var modelDetailHighlights: List<String> = emptyList(), var priceTitle: String = "",
 					var priceDesc: String = "",var mainDesc: String = "",

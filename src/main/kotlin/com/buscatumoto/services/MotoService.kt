@@ -1,6 +1,7 @@
 package com.buscatumoto.services
 
 import com.buscatumoto.util.BasicCrud
+
 import com.buscatumoto.models.Moto
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Page
@@ -12,6 +13,12 @@ import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import java.lang.NumberFormatException
+
+import org.apache.logging.log4j.Logger
+import com.sun.enterprise.module.common_impl.LogHelper
+import java.util.logging.Level
+
 
 
 @Service//declare this class as a Service "Component specialization"
@@ -49,16 +56,70 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 	}
 	
 	fun filter(brand: String?, model: String?,
-			    tipo: String?, precio: String?,
-			    precio_d: String?, precio_u: String?,
-			    cil_d: String?, cil_u: String?,
-			    year: String?, a2: String?): List<Moto> {
+			    tipo: String?,
+			    precio_d: Int?, precio_u: Int?,
+			    cil_d: Float?, cil_u: Float?,
+			    year: Int?, a2: String?): List<Moto> {
+		
+		var result = emptyList<Moto>()
+		
+		var precio_d_val : Int? = -1
+		var precio_u_val: Int? = -1
+		var cil_d_val: Double? = -1.0
+		var cil_u_val: Double? = -1.0
+
 		
 		//Validation
+		try {
+			precio_d_val = precio_d?.toInt()
+			precio_u_val = precio_u?.toInt()
+			cil_d_val = cil_d?.toDouble()
+			cil_u_val = cil_u?.toDouble()
+			
+		} catch (exception: NumberFormatException) {
+			LogHelper.getDefaultLogger().log(Level.INFO, exception.message)
+			return result
+		}
 		
-		var criteria: Criteria = Criteria.where("brand").`is`(brand)
+		//Filtering
+		var criteria = Criteria()
+
+		
+		brand?.let {
+			criteria.and("brand").`is`(brand)
+		}
+		
+		model?.let {
+			criteria.and("model").`is`(model)
+		}
+		tipo?.let {
+			criteria.and("tipo").`is`(tipo)
+		}
+		precio_d?.let {
+			criteria.and("precio").gte(precio_d)
+		}
+		precio_u?.let {
+			criteria.and("precio").lte(precio_u)
+		}
+		cil_d?.let {
+			criteria.and("displacement").gte(cil_d)
+		}
+		cil_u?.let {
+			criteria.and("displacement").lte(cil_u)
+		}
+		year?.let {
+			criteria.and("year").`is`(year)
+		}
+		
 		var query = Query(criteria)
-		val result = mongoTemplate.find(query, Moto::class.java)
+		
+		
+		
+		 
+		
+//		var criteria: Criteria = Criteria.where("brand").`is`(brand)
+//		var query = Query(criteria)
+		result = mongoTemplate.find(query, Moto::class.java)
 		
 		return result
 		

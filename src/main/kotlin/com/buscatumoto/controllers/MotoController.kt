@@ -50,13 +50,13 @@ class MotoController(val motoService: MotoService) {
 			   @RequestParam(name = "model", required = false) model: String? = "",
 			   @RequestParam(name = "tipo", required = false) tipo: String? = "",
 			   @RequestParam(name = "precio", required = false) precio: String? = "",
-			   @RequestParam(name = "precio_d", required = false) precio_d: String? = "",
-			   @RequestParam(name = "precio_u", required = false) precio_u: String? = "",
-			   @RequestParam(name = "cil_d", required = false) cil_d: String? = "",
-			   @RequestParam(name = "cil_u", required = false) cil_u: String? = "",
-			   @RequestParam(name = "year", required = false) year: String? = "",
+			   @RequestParam(name = "precio_d", required = false) precio_d: Int? = 0,
+			   @RequestParam(name = "precio_u", required = false) precio_u: Int? = 0,
+			   @RequestParam(name = "cil_d", required = false) cil_d: Float? = 0f,
+			   @RequestParam(name = "cil_u", required = false) cil_u: Float? = 0f,
+			   @RequestParam(name = "year", required = false) year: Int? = 0,
 			    @RequestParam(name = "a2", required = false) a2: String? = ""): List<Moto> {
-		return motoService.filter(brand, model, tipo, precio, precio_d, precio_u, cil_d, cil_u, year, a2)
+		return motoService.filter(brand, model, tipo, precio_d, precio_u, cil_d, cil_u, year, a2)
 	}
 	
 	@GetMapping("/search/{search}")
