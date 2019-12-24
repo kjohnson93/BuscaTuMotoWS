@@ -39,11 +39,20 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 		return result
 	}
 	
-	fun filter(brand: String, model: String,
-			    tipo: String, precio: String,
-			    precio_d: String, precio_u: String,
-			    cil_d: String, cil_u: String,
-			    year: String, a2: String): List<Moto> {
+	fun search(search: String): List<Moto> {
+
+		var criteria: Criteria = Criteria.where("model").regex(search, "i")
+				var query = Query(criteria)
+		val result = mongoTemplate.find(query, Moto::class.java)
+		
+		return result
+	}
+	
+	fun filter(brand: String?, model: String?,
+			    tipo: String?, precio: String?,
+			    precio_d: String?, precio_u: String?,
+			    cil_d: String?, cil_u: String?,
+			    year: String?, a2: String?): List<Moto> {
 		
 		//Validation
 		

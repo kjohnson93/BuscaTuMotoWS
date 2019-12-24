@@ -46,14 +46,23 @@ class MotoController(val motoService: MotoService) {
 	}
 	
 	@GetMapping("/filter")
-	fun filter(@RequestParam("brand") brand: String, @RequestParam("model") model: String,
-			   @RequestParam("tipo") tipo: String, @RequestParam("precio") precio: String,
-			   @RequestParam("precio_d") precio_d: String, @RequestParam("precio_u") precio_u: String,
-			   @RequestParam("cil_d") cil_d: String, @RequestParam("cil_u") cil_u: String,
-			   @RequestParam("year") year: String, @RequestParam("a2") a2: String): List<Moto> {
+	fun filter(@RequestParam(name = "brand", required = false) brand: String? = "",
+			   @RequestParam(name = "model", required = false) model: String? = "",
+			   @RequestParam(name = "tipo", required = false) tipo: String? = "",
+			   @RequestParam(name = "precio", required = false) precio: String? = "",
+			   @RequestParam(name = "precio_d", required = false) precio_d: String? = "",
+			   @RequestParam(name = "precio_u", required = false) precio_u: String? = "",
+			   @RequestParam(name = "cil_d", required = false) cil_d: String? = "",
+			   @RequestParam(name = "cil_u", required = false) cil_u: String? = "",
+			   @RequestParam(name = "year", required = false) year: String? = "",
+			    @RequestParam(name = "a2", required = false) a2: String? = ""): List<Moto> {
 		return motoService.filter(brand, model, tipo, precio, precio_d, precio_u, cil_d, cil_u, year, a2)
 	}
 	
+	@GetMapping("/search/{search}")
+	fun search(@PathVariable search: String): List<Moto> {
+		return motoService.search(search)
+	}
 	
 	
 	
