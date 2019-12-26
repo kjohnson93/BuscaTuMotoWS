@@ -20,182 +20,142 @@ import com.sun.enterprise.module.common_impl.LogHelper
 import java.util.logging.Level
 
 
-
 @Service//declare this class as a Service "Component specialization"
 /*injects DAO objects by constructor & implements BasicCrud interface*/
-class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate: MongoTemplate) : BasicCrud<String, Moto> {
+class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate: MongoTemplate) :
+	BasicCrud<String, Moto> {
 
 
 	override fun getAll(pageable: Pageable): Page<Moto> {
 		return motoDAO.findAll(pageable)
 	}
-	
+
 	fun getByBrand(brand: String): List<Moto> {
 		var criteria: Criteria = Criteria.where("brand").`is`(brand)
 		var query = Query(criteria)
 		val result = mongoTemplate.find(query, Moto::class.java)
-		
+
 		return result
 	}
-	
+
 	fun getByBikeType(bikeType: String): List<Moto> {
 		var criteria: Criteria = Criteria.where("bikeType").`is`(bikeType)
 		var query = Query(criteria)
 		val result = mongoTemplate.find(query, Moto::class.java)
-		
+
 		return result
 	}
-	
+
 	fun search(search: String): List<Moto> {
 
 		var criteria: Criteria = Criteria.where("model").regex(search, "i")
-				var query = Query(criteria)
+		var query = Query(criteria)
 		val result = mongoTemplate.find(query, Moto::class.java)
-		
+
 		return result
 	}
-	
-	fun filter(brand: String?, model: String?,
-			    tipo: String?,
-			    precio_d: Int?, precio_u: Int?,
-			    power_d: Float?, power_u: Float?,
-			    cil_d: Float?, cil_u: Float?,
-			    weight_d: Float?, weight_u: Float?,
-			    year: Int?, a2: String?): List<Moto> {
-		
-		var result = emptyList<Moto>()
-		
-		var precio_d_val : Int? = -1
-		var precio_u_val: Int? = -1
-		var cil_d_val: Double? = -1.0
-		var cil_u_val: Double? = -1.0
 
-		
-		//Validation
-//		try {
-//			precio_d_val = precio_d?.toInt()
-//			precio_u_val = precio_u?.toInt()
-//			cil_d_val = cil_d?.toDouble()
-//			cil_u_val = cil_u?.toDouble()
-//			
-//		} catch (exception: NumberFormatException) {
-//			LogHelper.getDefaultLogger().log(Level.INFO, exception.message)
-//			return result
-//		}
-		
+	fun filter(
+		brand: String?, model: String?,
+		tipo: String?,
+		precio_d: Int?, precio_u: Int?,
+		power_d: Float?, power_u: Float?,
+		cil_d: Float?, cil_u: Float?,
+		weight_d: Float?, weight_u: Float?,
+		year: Int?, a2: String?
+	): List<Moto> {
+
+		var result = emptyList<Moto>()
+
+
 		//Filtering
 		var criteria = Criteria()
+		var criteriaPriceD = Criteria()
+		var criteriaPriceU = Criteria()
+		var criteriaPowerD = Criteria()
+		var criteriaPowerU = Criteria()
+		var criteriaCilD = Criteria()
+		var criteriaCilU = Criteria()
+		var criteriaWeightD = Criteria()
+		var criteriaWeightU = Criteria()
 
-		
+
 		brand?.let {
 			criteria.and("brand").`is`(brand)
 		}
-		
+
 		model?.let {
 			criteria.and("model").`is`(model)
 		}
 		tipo?.let {
 			criteria.and("bikeType").`is`(tipo)
 		}
-		precio_d?.let {
-			//To avoid adding item with no price value
-			criteria.andOperator(
-			Criteria.where("price").gte(0),
-			Criteria.where("price").gte(precio_d)
-			)
-	
-		}
-		precio_u?.let {
-			//To avoid adding item with no price value
-			criteria.andOperator(
-			Criteria.where("price").gte(0),
-			Criteria.where("price").lte(precio_u)
-			)
-		}
-//		criteria.orOperator(
-//			criteria.andOperator(
-//			Criteria.where("price").gte(0),
-//			Criteria.where("price").gte(precio_d)),
-//			criteria.andOperator(
-//			Criteria.where("price").gte(0),
-//			Criteria.where("price").lte(precio_u))		
-//		)
-//			criteria.andOperator(
-//			Criteria.where("price").gte(precio_d))
-//			Criteria.where("price").lte(precio_u))
-					
-		
-		//**
-		
 
-//		 Query orQuery = new Query();
-// Criteria orCriteria = new Criteria();
-// List<Criteria> orExpression =  new ArrayList<>();
-// for (Map<String, Object> accounts : attributes) {
-//   Criteria expression = new Criteria();
-//   accounts.forEach((key, value) -> expression.and(key).is(value));
-//   orExpression.add(expression);
-// }
-// orQuery.addCriteria(orCriteria.orOperator(orExpression.toArray(new Criteria[orExpression.size()])));
-// List<User> userList = mongoOperations.find(orQuery, User.class);
-		
-//		query.addCriteria(Criteria.where("startDate").gte(startDate).lt(endDate));
-		
-		
+		precio_d?.let {
+			criteriaPriceD = Criteria.where("price").gte(it)
+		}
+
+		precio_u?.let {
+			criteriaPriceU = Criteria.where("price").lte(it).gte(0)
+		}
+
 		power_d?.let {
-			criteria.and("power").gte(power_d)
+			criteriaPowerD = Criteria.where("power").gte(it)
 		}
 		power_u?.let {
-			criteria.and("power").lte(power_u)
+			criteriaPowerU = Criteria.where("power").lte(it).gte(0)
 		}
+
 		cil_d?.let {
-			criteria.and("displacement").gte(cil_d)
+			criteriaCilD = Criteria.where("displacement").gte(it)
 		}
 		cil_u?.let {
-			criteria.and("displacement").lte(cil_u)
+			criteriaCilU = Criteria.where("displacement").lte(it).gte(0)
 		}
+
 		weight_d?.let {
-			criteria.and("weight").gte(weight_d)
+			criteriaWeightD = Criteria.where("weight").gte(it)
 		}
 		weight_u?.let {
-			criteria.and("weight").lte(weight_u)
+			criteriaWeightU = Criteria.where("weight").lte(it).gte(0)
 		}
+
+		criteria.andOperator(
+			criteriaPriceD, criteriaPriceU,
+			criteriaPowerD, criteriaPowerU,
+			criteriaCilD, criteriaCilU,
+			criteriaWeightD, criteriaWeightU
+		)
+
 		year?.let {
 			criteria.and("year").`is`(year)
 		}
 
-		
+
 		var query = Query(criteria)
-//		query.addCriteria(Criteria.where("price").gte(precio_d))
-		
-		
-		
-		 
-		
-//		var criteria: Criteria = Criteria.where("brand").`is`(brand)
-//		var query = Query(criteria)
+
 		result = mongoTemplate.find(query, Moto::class.java)
-		
+
 		return result
-		
+
 	}
-	
+
 	//test
 	fun getLicenseTitle(id: String): String {
-		
+
 		var criteria: Criteria = Criteria.where("id").`is`(id)
 		var query = Query(criteria)
 		val result = mongoTemplate.findOne(query, Moto::class.java)
-		
+
 		result?.let {
 			return it.licensesTitle
 		} ?: run {
 			return ""
 		}
 
-		
+
 	}
-	
+
 //	fun getLicenseTitle(id: String): String {
 //		
 //		return motoDAO.findById(id).get().licensesTitle
