@@ -58,7 +58,9 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 	fun filter(brand: String?, model: String?,
 			    tipo: String?,
 			    precio_d: Int?, precio_u: Int?,
+			    power_d: Float?, power_u: Float?,
 			    cil_d: Float?, cil_u: Float?,
+			    weight_d: Float?, weight_u: Float?,
 			    year: Int?, a2: String?): List<Moto> {
 		
 		var result = emptyList<Moto>()
@@ -70,16 +72,16 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 
 		
 		//Validation
-		try {
-			precio_d_val = precio_d?.toInt()
-			precio_u_val = precio_u?.toInt()
-			cil_d_val = cil_d?.toDouble()
-			cil_u_val = cil_u?.toDouble()
-			
-		} catch (exception: NumberFormatException) {
-			LogHelper.getDefaultLogger().log(Level.INFO, exception.message)
-			return result
-		}
+//		try {
+//			precio_d_val = precio_d?.toInt()
+//			precio_u_val = precio_u?.toInt()
+//			cil_d_val = cil_d?.toDouble()
+//			cil_u_val = cil_u?.toDouble()
+//			
+//		} catch (exception: NumberFormatException) {
+//			LogHelper.getDefaultLogger().log(Level.INFO, exception.message)
+//			return result
+//		}
 		
 		//Filtering
 		var criteria = Criteria()
@@ -93,13 +95,58 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 			criteria.and("model").`is`(model)
 		}
 		tipo?.let {
-			criteria.and("tipo").`is`(tipo)
+			criteria.and("bikeType").`is`(tipo)
 		}
 		precio_d?.let {
-			criteria.and("precio").gte(precio_d)
+			//To avoid adding item with no price value
+			criteria.andOperator(
+			Criteria.where("price").gte(0),
+			Criteria.where("price").gte(precio_d)
+			)
+	
 		}
 		precio_u?.let {
-			criteria.and("precio").lte(precio_u)
+			//To avoid adding item with no price value
+			criteria.andOperator(
+			Criteria.where("price").gte(0),
+			Criteria.where("price").lte(precio_u)
+			)
+		}
+//		criteria.orOperator(
+//			criteria.andOperator(
+//			Criteria.where("price").gte(0),
+//			Criteria.where("price").gte(precio_d)),
+//			criteria.andOperator(
+//			Criteria.where("price").gte(0),
+//			Criteria.where("price").lte(precio_u))		
+//		)
+//			criteria.andOperator(
+//			Criteria.where("price").gte(precio_d))
+//			Criteria.where("price").lte(precio_u))
+					
+		
+		//**
+		
+
+//		 Query orQuery = new Query();
+// Criteria orCriteria = new Criteria();
+// List<Criteria> orExpression =  new ArrayList<>();
+// for (Map<String, Object> accounts : attributes) {
+//   Criteria expression = new Criteria();
+//   accounts.forEach((key, value) -> expression.and(key).is(value));
+//   orExpression.add(expression);
+// }
+// orQuery.addCriteria(orCriteria.orOperator(orExpression.toArray(new Criteria[orExpression.size()])));
+// List<User> userList = mongoOperations.find(orQuery, User.class);
+		
+//		query.addCriteria(Criteria.where("startDate").gte(startDate).lt(endDate));
+		
+		
+		power_d?.let {
+			criteria.and("power").gte(power_d)
+		}
+		power_u?.let {
+			criteria.and("power").lte(power_u)
 		}
 		cil_d?.let {
 			criteria.and("displacement").gte(cil_d)
@@ -107,11 +154,19 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 		cil_u?.let {
 			criteria.and("displacement").lte(cil_u)
 		}
+		weight_d?.let {
+			criteria.and("weight").gte(weight_d)
+		}
+		weight_u?.let {
+			criteria.and("weight").lte(weight_u)
+		}
 		year?.let {
 			criteria.and("year").`is`(year)
 		}
+
 		
 		var query = Query(criteria)
+//		query.addCriteria(Criteria.where("price").gte(precio_d))
 		
 		
 		

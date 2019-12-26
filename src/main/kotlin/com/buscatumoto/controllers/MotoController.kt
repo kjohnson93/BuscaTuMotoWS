@@ -49,14 +49,19 @@ class MotoController(val motoService: MotoService) {
 	fun filter(@RequestParam(name = "brand", required = false) brand: String? = "",
 			   @RequestParam(name = "model", required = false) model: String? = "",
 			   @RequestParam(name = "tipo", required = false) tipo: String? = "",
-			   @RequestParam(name = "precio", required = false) precio: String? = "",
 			   @RequestParam(name = "precio_d", required = false) precio_d: Int? = 0,
 			   @RequestParam(name = "precio_u", required = false) precio_u: Int? = 0,
+   		       @RequestParam(name = "power_d", required = false) power_d: Float? = 0f,
+		       @RequestParam(name = "power_u", required = false) power_u: Float? = 0f,
 			   @RequestParam(name = "cil_d", required = false) cil_d: Float? = 0f,
 			   @RequestParam(name = "cil_u", required = false) cil_u: Float? = 0f,
+	           @RequestParam(name = "weight_d", required = false) weight_d: Float? = 0f,
+		       @RequestParam(name = "weight_u", required = false) weight_u: Float? = 0f,
 			   @RequestParam(name = "year", required = false) year: Int? = 0,
-			    @RequestParam(name = "a2", required = false) a2: String? = ""): List<Moto> {
-		return motoService.filter(brand, model, tipo, precio_d, precio_u, cil_d, cil_u, year, a2)
+		       @RequestParam(name = "a2", required = false) a2: String? = ""
+	): List<Moto> {
+		return motoService.filter(brand, model, tipo, precio_d, precio_u,
+			power_d, power_u, cil_d, cil_u, weight_d, weight_u, year, a2)
 	}
 	
 	@GetMapping("/search/{search}")
