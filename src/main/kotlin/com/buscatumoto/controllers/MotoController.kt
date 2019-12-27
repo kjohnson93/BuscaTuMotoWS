@@ -58,7 +58,7 @@ class MotoController(val motoService: MotoService) {
 	           @RequestParam(name = "weight_d", required = false) weight_d: Float? = 0f,
 		       @RequestParam(name = "weight_u", required = false) weight_u: Float? = 0f,
 			   @RequestParam(name = "year", required = false) year: Int? = 0,
-		       @RequestParam(name = "a2", required = false) a2: String? = ""
+		       @RequestParam(name = "license", required = false) a2: String? = ""
 	): List<Moto> {
 		return motoService.filter(brand, model, tipo, precio_d, precio_u,
 			power_d, power_u, cil_d, cil_u, weight_d, weight_u, year, a2)

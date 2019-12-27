@@ -62,7 +62,7 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 		power_d: Float?, power_u: Float?,
 		cil_d: Float?, cil_u: Float?,
 		weight_d: Float?, weight_u: Float?,
-		year: Int?, a2: String?
+		year: Int?, license: String?
 	): List<Moto> {
 
 		var result = emptyList<Moto>()
@@ -129,6 +129,12 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 
 		year?.let {
 			criteria.and("year").`is`(year)
+		}
+		
+		license?.let {
+		
+			criteria.and("licenses").`in`(license)
+//			val dbLicenses = mongoTemplate.find(Criteria.where("licenses").`in`("A2"), Moto::class.java)
 		}
 
 
