@@ -25,27 +25,10 @@ import java.util.logging.Level
 class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate: MongoTemplate) :
 	BasicCrud<String, Moto> {
 
-
-	override fun getAll(pageable: Pageable): Page<Moto> {
-		return motoDAO.findAll(pageable)
-	}
-
-	fun getByBrand(brand: String): List<Moto> {
-		var criteria: Criteria = Criteria.where("brand").`is`(brand)
-		var query = Query(criteria)
-		val result = mongoTemplate.find(query, Moto::class.java)
-
-		return result
-	}
-
-	fun getByBikeType(bikeType: String): List<Moto> {
-		var criteria: Criteria = Criteria.where("bikeType").`is`(bikeType)
-		var query = Query(criteria)
-		val result = mongoTemplate.find(query, Moto::class.java)
-
-		return result
-	}
-
+	/*
+ 	## SEARCH METHODS
+	 */
+	
 	fun search(search: String): List<Moto> {
 
 		var criteria: Criteria = Criteria.where("model").regex(search, "i")
@@ -134,9 +117,7 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 		license?.let {
 		
 			criteria.and("licenses").`in`(license)
-//			val dbLicenses = mongoTemplate.find(Criteria.where("licenses").`in`("A2"), Moto::class.java)
 		}
-
 
 		var query = Query(criteria)
 
@@ -146,6 +127,48 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 
 	}
 
+	
+	/*
+ 	## SEARCH METHODS
+	 */
+		
+	/*
+ 	## GET INFO METHODS
+	 */
+	
+	//Moto Catalog info
+	
+	//Moto detail info
+	
+	/*
+ 	## GET INFO METHODS
+	 */
+	
+	/*
+ 	## TEST METHODS
+	 */
+	
+	override fun getAll(pageable: Pageable): Page<Moto> {
+		return motoDAO.findAll(pageable)
+	}
+
+	fun getByBrand(brand: String): List<Moto> {
+		var criteria: Criteria = Criteria.where("brand").`is`(brand)
+		var query = Query(criteria)
+		val result = mongoTemplate.find(query, Moto::class.java)
+
+		return result
+	}
+
+	fun getByBikeType(bikeType: String): List<Moto> {
+		var criteria: Criteria = Criteria.where("bikeType").`is`(bikeType)
+		var query = Query(criteria)
+		val result = mongoTemplate.find(query, Moto::class.java)
+
+		return result
+	}
+
+	
 	//test
 	fun getLicenseTitle(id: String): String {
 
@@ -162,11 +185,6 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 
 	}
 
-//	fun getLicenseTitle(id: String): String {
-//		
-//		return motoDAO.findById(id).get().licensesTitle
-//		
-//	}
 
 	override fun getById(id: String): Optional<Moto> {
 		return motoDAO.findById(id)
@@ -220,4 +238,8 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 			}
 		}
 	}
+	
+	/*
+ 	## TEST METHODS
+	 */
 }
