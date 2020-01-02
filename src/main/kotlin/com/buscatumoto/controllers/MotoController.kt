@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.data.mongodb.core.aggregation.ArithmeticOperators.Log
 
+import com.buscatumoto.models.Brand
+
+
 @RestController
 @RequestMapping("api/moto")
 class MotoController(val motoService: MotoService) {
@@ -51,6 +54,54 @@ class MotoController(val motoService: MotoService) {
 	 */
 	
 	/*
+ 	## FILTER FIELDS METHODS
+  	*/
+	
+	//get brands
+	@GetMapping("/field/brands")
+	fun getBrands(): List<Brand> {
+		return motoService.getBrands()
+	}
+	
+	
+	//get bikes by brand
+	@GetMapping("/brand/{brand}")
+	fun getByBrand(@PathVariable brand: String): List<Moto> {
+		return motoService.getByBrand(brand)
+	}
+	
+	//get bikeTypes
+	
+	
+	//get prices minumum spinner values
+	
+	//get prices maximun spinner values
+		
+	//get power minimum spinner values
+	
+	//get power maximun spinner values
+	
+	//get displacement minimum spinner values
+	
+	//get displacement maximun spinner values
+	
+	//get weight minimum spinner values
+	
+	//get weight maximun spinner values
+	
+	//get year spinner values
+	
+	//get license spinner values
+
+
+
+
+	
+	/*
+ 	## VIEW FIELDS METHODS
+  	*/
+	
+	/*
  	## GET INFO METHODS
 	 */
 	
@@ -71,10 +122,7 @@ class MotoController(val motoService: MotoService) {
 		return motoService.getAll(pageable)
 	}
 	
-	@GetMapping("/brand/{brand}")
-	fun getByBrand(@PathVariable brand: String): List<Moto> {
-		return motoService.getByBrand(brand)
-	}
+
 	
 	@GetMapping("/bikeType/{bikeType}")
 	fun getByBikeType(@PathVariable bikeType: String): List<Moto>{

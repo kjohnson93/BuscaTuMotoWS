@@ -18,6 +18,7 @@ import java.lang.NumberFormatException
 import org.apache.logging.log4j.Logger
 import com.sun.enterprise.module.common_impl.LogHelper
 import java.util.logging.Level
+import com.buscatumoto.models.Brand
 
 
 @Service//declare this class as a Service "Component specialization"
@@ -131,6 +132,27 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 	/*
  	## SEARCH METHODS
 	 */
+	
+	/*
+ 	## FILTER FIELDS METHODS
+  	*/
+	
+	fun getBrands(): List<Brand> {
+
+//		return mongoTemplate.findAll(Brand::class.java)
+		val query = Query()
+		
+		query.fields().include("brand")
+		//TODO Find a way to only return Brand in the document output
+//		query.fields().exclude("_id")
+		
+		return mongoTemplate.find(query ,Brand::class.java)
+		
+		}
+	
+	/*
+ 	## FILTER FIELDS METHODS
+  	*/
 		
 	/*
  	## GET INFO METHODS

@@ -4,7 +4,8 @@ import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Field
 
-data class Brand(var id: String?,var name: String?)
+@Document(collection = "moto_brands")
+data class Brand(var id: String?,var brand: String?)
 
 @Document(collection = "motos")
 data class Moto(@Id var id: String? = null, var bikeType: String = "", var brand: String = "",
