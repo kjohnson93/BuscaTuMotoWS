@@ -59,7 +59,7 @@ class MotoController(val motoService: MotoService) {
 	
 	//get brands
 	@GetMapping("/field/brands")
-	fun getBrands(): List<Brand> {
+	fun getBrands(): List<String> {
 		return motoService.getBrands()
 	}
 	
@@ -69,9 +69,12 @@ class MotoController(val motoService: MotoService) {
 	fun getByBrand(@PathVariable brand: String): List<Moto> {
 		return motoService.getByBrand(brand)
 	}
-	
+		
 	//get bikeTypes
-	
+	@GetMapping("/field/biketypes")
+	fun getBikeTypes(): List<String> {
+		return motoService.getBikeTypes()
+	}
 	
 	//get prices minumum spinner values
 	
@@ -90,11 +93,55 @@ class MotoController(val motoService: MotoService) {
 	//get weight maximun spinner values
 	
 	//get year spinner values
+	@GetMapping("/field/years")
+	fun getYears(): List<Int> {
+		return motoService.getYears()
+	}
 	
-	//get license spinner values
-
-
-
+	@GetMapping("/field/priceMin")
+	fun getPriceMin(): List<Int> {
+		return motoService.getPriceMin()
+	}
+	
+	@GetMapping("/field/priceMax")
+	fun getPriceMax(): List<Int> {
+		return motoService.getPriceMax()
+	}
+	
+	@GetMapping("/field/powerMin")
+	fun getPowerMin(): List<Float> {
+		return motoService.getPowerMin()
+	}
+	
+	@GetMapping("/field/powerMax")
+	fun getPowerMax(): List<Float> {
+		return motoService.getPowerMax()
+	}
+	
+	@GetMapping("/field/cilMin")
+	fun getCilMin(): List<Float> {
+		return motoService.getCilMin()
+	}
+	
+	@GetMapping("/field/cilMax")
+	fun getCilMax(): List<Float> {
+		return motoService.getCilMax()
+	}
+	
+	@GetMapping("/field/weightMin")
+	fun getWeightMin(): List<Float> {
+		return motoService.getWeightMin()
+	}
+	
+	@GetMapping("/field/weightMax")
+	fun getWeightMax(): List<Float> {
+		return motoService.getWeightMax()
+	}
+			
+	@GetMapping("/field/licenses")
+	fun getLicenses(): List<String> {
+		return motoService.getLicenses()
+	}
 
 	
 	/*

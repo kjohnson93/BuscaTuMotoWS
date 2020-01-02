@@ -19,6 +19,11 @@ import org.apache.logging.log4j.Logger
 import com.sun.enterprise.module.common_impl.LogHelper
 import java.util.logging.Level
 import com.buscatumoto.models.Brand
+import com.mongodb.BasicDBObject
+import com.mongodb.client.model.Sorts
+import java.util.Calendar
+import java.util.ArrayList
+import com.buscatumoto.models.MotoField
 
 
 @Service//declare this class as a Service "Component specialization"
@@ -133,22 +138,139 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
  	## SEARCH METHODS
 	 */
 	
+	
 	/*
  	## FILTER FIELDS METHODS
   	*/
-	
-	fun getBrands(): List<Brand> {
+		//get brands
+	fun getBrands(): List<String> {
 
+		//gibberish tryng to sort alphabetically brand column
 //		return mongoTemplate.findAll(Brand::class.java)
-		val query = Query()
-		
-		query.fields().include("brand")
+//		
+//		var query = Query()
+//		query.fields().include("brand")
 		//TODO Find a way to only return Brand in the document output
 //		query.fields().exclude("_id")
+//		val dbo: BasicDBObject = BasicDBObject()
 		
-		return mongoTemplate.find(query ,Brand::class.java)
 		
+//		return mongoTemplate.findAll(Moto::class.java).distinct('brand', query.getQueryObject())
+//		return mongoTemplate.getCollection("motos").distinct("brand", query.getQueryObject())
+		
+//		var sort = Sorts.ascending("brand")
+		
+//		var sortDomain = Sort.by(Sort.Direction.ASC, "brand")
+//		var sortDomain = Sort()
+//
+//		var query = Query()
+//		query.with(sortDomain)
+
+//		finds all the distinct brands in Moto collection
+		val result = mongoTemplate.findDistinct("brand", Moto::class.java, String::class.java)
+		result.sort()
+		
+		return result
+	}
+	
+	//get bikes by brand
+	fun getByBrand(brand: String): List<Moto> {
+		var criteria: Criteria = Criteria.where("brand").`is`(brand)
+		var query = Query(criteria)
+		val result = mongoTemplate.find(query, Moto::class.java)
+
+		return result
+	}
+	
+	//get bikeTypes
+	fun getBikeTypes(): List<String> {
+		val result = mongoTemplate.findDistinct("bikeType", Moto::class.java, String::class.java)
+		result.sort()
+		
+		return result
+	}
+	
+	//get prices minumum spinner values
+	fun getPriceMin(): List<Int> {
+		return mongoTemplate.findDistinct("priceMin", MotoField::class.java, Int::class.java)
+	}
+	
+	//get prices maximun spinner values
+	fun getPriceMax(): List<Int> {
+		return mongoTemplate.findDistinct("priceMax", MotoField::class.java, Int::class.java)
+	}	
+	
+	//get power minimum spinner values
+	fun getPowerMin(): List<Float> {
+		return mongoTemplate.findDistinct("powerMin", MotoField::class.java, Float::class.java)
+	}
+	
+	//get power maximun spinner values
+	fun getPowerMax(): List<Float> {
+		return mongoTemplate.findDistinct("powerMax", MotoField::class.java, Float::class.java)
+	}
+	
+	//get displacement minimum spinner values
+	fun getCilMin(): List<Float> {
+		return mongoTemplate.findDistinct("cilMin", MotoField::class.java, Float::class.java)
+	}
+	
+	//get displacement maximun spinner values
+	fun getCilMax(): List<Float> {
+		return mongoTemplate.findDistinct("cilMax", MotoField::class.java, Float::class.java)
+	}
+	//get weight minimum spinner values
+		fun getWeightMin(): List<Float> {
+		return mongoTemplate.findDistinct("weightMin", MotoField::class.java, Float::class.java)
+	}
+	
+	//get weight maximun spinner values
+		fun getWeightMax(): List<Float> {
+		return mongoTemplate.findDistinct("weightMax", MotoField::class.java, Float::class.java)
+	}
+	
+	//get year spinner values. Gets all years in db, except for years greaters than current one.
+	fun getYears(): List<Int> {
+		val result = mongoTemplate.findDistinct("year", Moto::class.java, Int::class.java)
+		result.sort()
+		
+		val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+		
+		val yearsToRemove = ArrayList<Int>()
+		
+		result.forEach {
+			if (it > currentYear) {
+				yearsToRemove.add(it)
+			}
 		}
+		
+		result.removeAll(yearsToRemove)
+		
+		if (result.contains(-1)) {
+			result.remove(-1)
+		}
+		
+		result.sortDescending()
+				
+		return result
+	}
+	
+	//licenses
+	fun getLicenses(): List<String> {
+		
+		val result = mongoTemplate.findDistinct("licenses", MotoField::class.java, String::class.java)
+		
+		val aux0 = result[0]
+		result[0] = result[2]
+		result[2] = aux0
+		
+		val aux1 = result[1]
+		result[1] = result[3]
+		result[3] = aux1
+		
+		return result
+	}
+	
 	
 	/*
  	## FILTER FIELDS METHODS
@@ -174,13 +296,7 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 		return motoDAO.findAll(pageable)
 	}
 
-	fun getByBrand(brand: String): List<Moto> {
-		var criteria: Criteria = Criteria.where("brand").`is`(brand)
-		var query = Query(criteria)
-		val result = mongoTemplate.find(query, Moto::class.java)
 
-		return result
-	}
 
 	fun getByBikeType(bikeType: String): List<Moto> {
 		var criteria: Criteria = Criteria.where("bikeType").`is`(bikeType)
