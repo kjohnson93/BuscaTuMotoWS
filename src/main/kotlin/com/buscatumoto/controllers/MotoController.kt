@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.data.mongodb.core.aggregation.ArithmeticOperators.Log
 
 import com.buscatumoto.models.Brand
+import com.buscatumoto.model.MotoResponse
+import com.buscatumoto.model.MotoFieldResponse
 
 
 @RestController
@@ -40,7 +42,7 @@ class MotoController(val motoService: MotoService) {
 		       @RequestParam(name = "weight_u", required = false) weight_u: Float? = 0f,
 			   @RequestParam(name = "year", required = false) year: Int? = 0,
 		       @RequestParam(name = "license", required = false) a2: String? = ""
-	): List<Moto> {
+	): MotoResponse {
 		return motoService.filter(brand, model, tipo, precio_d, precio_u,
 			power_d, power_u, cil_d, cil_u, weight_d, weight_u, year, a2)
 	}
@@ -57,12 +59,19 @@ class MotoController(val motoService: MotoService) {
  	## FILTER FIELDS METHODS
   	*/
 	
+	
+	//get all fields
+	@GetMapping("/fields")
+	fun getFields(): MotoFieldResponse {
+		return motoService.getFilterFormFields()
+	}
+	
+	
 	//get brands
 	@GetMapping("/field/brands")
 	fun getBrands(): List<String> {
 		return motoService.getBrands()
 	}
-	
 	
 	//get bikes by brand
 	@GetMapping("/brand/{brand}")
@@ -76,68 +85,60 @@ class MotoController(val motoService: MotoService) {
 		return motoService.getBikeTypes()
 	}
 	
-	//get prices minumum spinner values
-	
-	//get prices maximun spinner values
-		
-	//get power minimum spinner values
-	
-	//get power maximun spinner values
-	
-	//get displacement minimum spinner values
-	
-	//get displacement maximun spinner values
-	
-	//get weight minimum spinner values
-	
-	//get weight maximun spinner values
-	
 	//get year spinner values
 	@GetMapping("/field/years")
 	fun getYears(): List<Int> {
 		return motoService.getYears()
 	}
-	
+	//get prices minumum spinner values
 	@GetMapping("/field/priceMin")
 	fun getPriceMin(): List<Int> {
 		return motoService.getPriceMin()
 	}
 	
+	//get prices maximun spinner values
 	@GetMapping("/field/priceMax")
 	fun getPriceMax(): List<Int> {
 		return motoService.getPriceMax()
 	}
 	
+	//get power minimum spinner values
 	@GetMapping("/field/powerMin")
 	fun getPowerMin(): List<Float> {
 		return motoService.getPowerMin()
 	}
 	
+	//get power maximun spinner values
 	@GetMapping("/field/powerMax")
 	fun getPowerMax(): List<Float> {
 		return motoService.getPowerMax()
 	}
 	
+	//get displacement minimum spinner values
 	@GetMapping("/field/cilMin")
 	fun getCilMin(): List<Float> {
 		return motoService.getCilMin()
 	}
 	
+	//get displacement maximun spinner values
 	@GetMapping("/field/cilMax")
 	fun getCilMax(): List<Float> {
 		return motoService.getCilMax()
 	}
 	
+	//get weight minimum spinner values
 	@GetMapping("/field/weightMin")
 	fun getWeightMin(): List<Float> {
 		return motoService.getWeightMin()
 	}
 	
+	//get weight maximun spinner values
 	@GetMapping("/field/weightMax")
 	fun getWeightMax(): List<Float> {
 		return motoService.getWeightMax()
 	}
-			
+	
+	//get licenses	
 	@GetMapping("/field/licenses")
 	fun getLicenses(): List<String> {
 		return motoService.getLicenses()

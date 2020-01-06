@@ -30,3 +30,4 @@ data class MotoField(@Id var id: String? = null,
 					 var cilMin: List<Float> = emptyList(), var cilMax: List<Float> = emptyList(),
 					 var weightMin: List<Float> = emptyList(), var weightMax: List<Float> = emptyList(),
 					 var licenses: List<String> = emptyList())
+

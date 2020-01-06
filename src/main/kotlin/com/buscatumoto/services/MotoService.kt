@@ -24,6 +24,8 @@ import com.mongodb.client.model.Sorts
 import java.util.Calendar
 import java.util.ArrayList
 import com.buscatumoto.models.MotoField
+import com.buscatumoto.model.MotoResponse
+import com.buscatumoto.model.MotoFieldResponse
 
 
 @Service//declare this class as a Service "Component specialization"
@@ -52,7 +54,7 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 		cil_d: Float?, cil_u: Float?,
 		weight_d: Float?, weight_u: Float?,
 		year: Int?, license: String?
-	): List<Moto> {
+	): MotoResponse {
 
 		var result = emptyList<Moto>()
 
@@ -128,9 +130,29 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 		var query = Query(criteria)
 
 		result = mongoTemplate.find(query, Moto::class.java)
+		
+		
+		var response = MotoResponse("No se ha encontrado ningún resultado con el criterio utilizado"
+			, emptyList())
+		
+		result?.let {
+			if (result.size > 0) {
+				response = MotoResponse("OK", result)
+			} else {
+				response = MotoResponse("KO", result)
+			}
+		} 
+
+		return response
+	}
+	
+	//get bikes by brand
+	fun getByBrand(brand: String): List<Moto> {
+		var criteria: Criteria = Criteria.where("brand").`is`(brand)
+		var query = Query(criteria)
+		val result = mongoTemplate.find(query, Moto::class.java)
 
 		return result
-
 	}
 
 	
@@ -142,43 +164,47 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 	/*
  	## FILTER FIELDS METHODS
   	*/
-		//get brands
-	fun getBrands(): List<String> {
+	
+	//get all fields
+	fun getFilterFormFields(): MotoFieldResponse {
+		var result = MotoFieldResponse()
+		
+		val brands = getBrands()
+		val bikeTypes = getBikeTypes()
+		
+		var priceMin = getPriceMin()
+		var priceMax = getPriceMax()
+		var powerMin = getPowerMin()
+		var powerMax = getPowerMax()
+		var cilMin = getCilMin()
+		var cilMax = getCilMax()
+		var weightMin = getWeightMin()
+		var weightMax = getWeightMax()
+		var years = getYears()
+		var licenses = getLicenses()
+		
+		result.respuesta = "OK"
+		result.brandList = brands
+		result.bikeTypesList = bikeTypes
+		result.priceMinList = priceMin
+		result.priceMaxList = priceMax
+		result.powerMinList = powerMin
+		result.powerMaxList = powerMax
+		result.cilMinList = cilMin
+		result.cilMaxList = cilMax
+		result.weightMinList = weightMin
+		result.weightMaxList = weightMax
+		result.yearList = years
+		result.licenses = licenses
 
-		//gibberish tryng to sort alphabetically brand column
-//		return mongoTemplate.findAll(Brand::class.java)
-//		
-//		var query = Query()
-//		query.fields().include("brand")
-		//TODO Find a way to only return Brand in the document output
-//		query.fields().exclude("_id")
-//		val dbo: BasicDBObject = BasicDBObject()
-		
-		
-//		return mongoTemplate.findAll(Moto::class.java).distinct('brand', query.getQueryObject())
-//		return mongoTemplate.getCollection("motos").distinct("brand", query.getQueryObject())
-		
-//		var sort = Sorts.ascending("brand")
-		
-//		var sortDomain = Sort.by(Sort.Direction.ASC, "brand")
-//		var sortDomain = Sort()
-//
-//		var query = Query()
-//		query.with(sortDomain)
-
-//		finds all the distinct brands in Moto collection
-		val result = mongoTemplate.findDistinct("brand", Moto::class.java, String::class.java)
-		result.sort()
-		
 		return result
 	}
 	
-	//get bikes by brand
-	fun getByBrand(brand: String): List<Moto> {
-		var criteria: Criteria = Criteria.where("brand").`is`(brand)
-		var query = Query(criteria)
-		val result = mongoTemplate.find(query, Moto::class.java)
-
+	//get brands
+	fun getBrands(): List<String> {
+		val result = mongoTemplate.findDistinct("brand", Moto::class.java, String::class.java)
+		result.sort()
+		
 		return result
 	}
 	
@@ -220,12 +246,12 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 		return mongoTemplate.findDistinct("cilMax", MotoField::class.java, Float::class.java)
 	}
 	//get weight minimum spinner values
-		fun getWeightMin(): List<Float> {
+	fun getWeightMin(): List<Float> {
 		return mongoTemplate.findDistinct("weightMin", MotoField::class.java, Float::class.java)
 	}
 	
 	//get weight maximun spinner values
-		fun getWeightMax(): List<Float> {
+	fun getWeightMax(): List<Float> {
 		return mongoTemplate.findDistinct("weightMax", MotoField::class.java, Float::class.java)
 	}
 	
