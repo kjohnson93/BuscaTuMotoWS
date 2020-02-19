@@ -54,7 +54,7 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 		cil_d: Float?, cil_u: Float?,
 		weight_d: Float?, weight_u: Float?,
 		year: Int?, license: String?
-	): MotoResponse {
+	): List<Moto> {
 
 		var result = emptyList<Moto>()
 
@@ -132,18 +132,18 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 		result = mongoTemplate.find(query, Moto::class.java)
 		
 		
-		var response = MotoResponse("No se ha encontrado ningún resultado con el criterio utilizado"
-			, emptyList())
-		
-		result?.let {
-			if (result.size > 0) {
-				response = MotoResponse("OK", result)
-			} else {
-				response = MotoResponse("KO", result)
-			}
-		} 
+//		var response = MotoResponse("No se ha encontrado ningún resultado con el criterio utilizado"
+//			, emptyList())
+//		
+//		result?.let {
+//			if (result.size > 0) {
+//				response = MotoResponse("OK", result)
+//			} else {
+//				response = MotoResponse("KO", result)
+//			}
+//		} 
 
-		return response
+		return result
 	}
 	
 	//get bikes by brand
