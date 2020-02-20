@@ -28,7 +28,7 @@ class MotoController(val motoService: MotoService) {
 	/*
  	## SEARCH METHODS
 	 */
-		@GetMapping("/filter")
+	@GetMapping("/filter")
 	fun filter(@RequestParam(name = "brand", required = false) brand: String? = "",
 			   @RequestParam(name = "model", required = false) model: String? = "",
 			   @RequestParam(name = "tipo", required = false) tipo: String? = "",
@@ -41,15 +41,18 @@ class MotoController(val motoService: MotoService) {
 	           @RequestParam(name = "weight_d", required = false) weight_d: Float? = 0f,
 		       @RequestParam(name = "weight_u", required = false) weight_u: Float? = 0f,
 			   @RequestParam(name = "year", required = false) year: Int? = 0,
-		       @RequestParam(name = "license", required = false) a2: String? = ""
-	): List<Moto> {
+		       @RequestParam(name = "license", required = false) a2: String? = "",
+					   pageable: Pageable): Page<Moto> {
+		
 		return motoService.filter(brand, model, tipo, precio_d, precio_u,
-			power_d, power_u, cil_d, cil_u, weight_d, weight_u, year, a2)
+			power_d, power_u, cil_d, cil_u, weight_d, weight_u, year, a2, pageable)
+		
 	}
 	
+
 	@GetMapping("/search/{search}")
-	fun search(@PathVariable search: String): List<Moto> {
-		return motoService.search(search)
+	fun search(@PathVariable search: String, pageable: Pageable): Page<Moto> {
+		return motoService.search(search, pageable)
 	}
 	/*
  	## SEARCH METHODS
@@ -75,7 +78,7 @@ class MotoController(val motoService: MotoService) {
 	
 	//get bikes by brand
 	@GetMapping("/brand/{brand}")
-	fun getByBrand(@PathVariable brand: String): List<Moto> {
+	fun getByBrand(@PathVariable brand: String): List<String> {
 		return motoService.getByBrand(brand)
 	}
 		

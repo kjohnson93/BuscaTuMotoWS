@@ -26,6 +26,8 @@ import java.util.ArrayList
 import com.buscatumoto.models.MotoField
 import com.buscatumoto.model.MotoResponse
 import com.buscatumoto.model.MotoFieldResponse
+import org.springframework.data.repository.support.PageableExecutionUtils
+import java.util.function.LongSupplier
 
 
 @Service//declare this class as a Service "Component specialization"
@@ -36,29 +38,31 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 	/*
  	## SEARCH METHODS
 	 */
-	
-	fun search(search: String): List<Moto> {
-
+	fun search(search: String, pageable: Pageable): Page<Moto> {
+		
 		var criteria: Criteria = Criteria.where("model").regex(search, "i")
-		var query = Query(criteria)
-		val result = mongoTemplate.find(query, Moto::class.java)
-
+		var query = Query(criteria).with(pageable)
+		
+		val list = mongoTemplate.find(query, Moto::class.java)
+		
+		val result = PageableExecutionUtils.getPage(list, pageable, object: LongSupplier {
+			override fun getAsLong(): Long {
+				 return	mongoTemplate.count(query, Moto::class.java)
+				}
+		})
+	
 		return result
 	}
-
-	fun filter(
+	
+		fun filter(
 		brand: String?, model: String?,
 		tipo: String?,
 		precio_d: Int?, precio_u: Int?,
 		power_d: Float?, power_u: Float?,
 		cil_d: Float?, cil_u: Float?,
 		weight_d: Float?, weight_u: Float?,
-		year: Int?, license: String?
-	): List<Moto> {
-
-		var result = emptyList<Moto>()
-
-
+		year: Int?, license: String?,
+		pageable: Pageable): Page<Moto> {
 		//Filtering
 		var criteria = Criteria()
 		var criteriaPriceD = Criteria()
@@ -127,32 +131,33 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 			criteria.and("licenses").`in`(license)
 		}
 
-		var query = Query(criteria)
-
-		result = mongoTemplate.find(query, Moto::class.java)
-		
-		
-//		var response = MotoResponse("No se ha encontrado ningún resultado con el criterio utilizado"
-//			, emptyList())
-//		
-//		result?.let {
-//			if (result.size > 0) {
-//				response = MotoResponse("OK", result)
-//			} else {
-//				response = MotoResponse("KO", result)
-//			}
-//		} 
-
-		return result
+		var query = Query(criteria).with(pageable)
+			
+		val list = mongoTemplate.find(query, Moto::class.java)
+			
+		return PageableExecutionUtils.getPage(list, pageable, object: LongSupplier {
+			override fun getAsLong(): Long {
+			 val count = mongoTemplate.count(query, Moto::class.java)
+				return count	
+			}
+		})	
 	}
 	
-	//get bikes by brand
-	fun getByBrand(brand: String): List<Moto> {
+	fun getByBrand(brand: String): List<String> {
+		
 		var criteria: Criteria = Criteria.where("brand").`is`(brand)
 		var query = Query(criteria)
 		val result = mongoTemplate.find(query, Moto::class.java)
-
-		return result
+		
+		val list = ArrayList<String>()
+						
+		result.forEach {
+				 element ->
+			
+			list.add(element.model)
+		}
+		
+		return list
 	}
 
 	
