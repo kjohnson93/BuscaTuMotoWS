@@ -28,6 +28,10 @@ import com.buscatumoto.model.MotoResponse
 import com.buscatumoto.model.MotoFieldResponse
 import org.springframework.data.repository.support.PageableExecutionUtils
 import java.util.function.LongSupplier
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
+import org.springframework.data.domain.PageImpl
+import org.springframework.beans.support.PagedListHolder
 
 
 @Service//declare this class as a Service "Component specialization"
@@ -40,19 +44,27 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 	 */
 	fun search(search: String, pageable: Pageable): Page<Moto> {
 		
+		
 		var criteria: Criteria = Criteria.where("model").regex(search, "i")
+		
+		var queryTotal = Query(criteria)
 		var query = Query(criteria).with(pageable)
 		
 		val list = mongoTemplate.find(query, Moto::class.java)
 		
-		val result = PageableExecutionUtils.getPage(list, pageable, object: LongSupplier {
-			override fun getAsLong(): Long {
-				 return	mongoTemplate.count(query, Moto::class.java)
-				}
-		})
+		val total = mongoTemplate.count(queryTotal, Moto::class.java)
+		
+		val pageMoto: Page<Moto> = PageImpl<Moto>(list, pageable, total)		
 	
-		return result
+		return pageMoto
 	}
+	
+//	fun searchTotalPages(search: String, pageable: Pageable, page: Int, pageSize: Int): Page<Moto> {
+//		
+//		val pageRequest: PageRequest = PageRequest.of(page - 1, pageSize, Sort.Direction.DESC)
+//		
+//		val result: Page<Moto> = motoDAO.find
+//	}
 	
 		fun filter(
 		brand: String?, model: String?,
@@ -133,14 +145,15 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 
 		var query = Query(criteria).with(pageable)
 			
+		var queryTotal = Query(criteria)
+		val countTotal = mongoTemplate.count(queryTotal, Moto::class.java)
+			
 		val list = mongoTemplate.find(query, Moto::class.java)
 			
-		return PageableExecutionUtils.getPage(list, pageable, object: LongSupplier {
-			override fun getAsLong(): Long {
-			 val count = mongoTemplate.count(query, Moto::class.java)
-				return count	
-			}
-		})	
+		val result = PageImpl(list, pageable, countTotal)
+			
+			
+		return result
 	}
 	
 	fun getByBrand(brand: String): List<String> {
