@@ -13,7 +13,7 @@ data class Moto(@Id var id: String? = null, var bikeType: String = "", var brand
 					var weight: Float = 0f, var year: Int = 0,
 					var imgThumbUrl: String = "",
 					var modelHighlights: String = "", var imgBannerUrl: String = "",
-					var modelDetailHighlights: List<String> = emptyList(), var priceTitle: String = "",
+					var modelDetailHighlights: String? = null, var priceTitle: String = "",
 					var priceDesc: String = "",var mainDesc: String = "",
 					var licenses: List<String> = emptyList(),
 					@Field("licenses_title") var licensesTitle: String = "",

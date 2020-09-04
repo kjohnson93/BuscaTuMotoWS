@@ -41,18 +41,22 @@ class MotoController(val motoService: MotoService) {
 	           @RequestParam(name = "weight_d", required = false) weight_d: Float? = 0f,
 		       @RequestParam(name = "weight_u", required = false) weight_u: Float? = 0f,
 			   @RequestParam(name = "year", required = false) year: Int? = 0,
-		       @RequestParam(name = "license", required = false) a2: String? = "",
+		       @RequestParam(name = "license", required = false) license: String? = "",
+   		       @RequestParam(name = "language", required = false) language: String? = "",
 					   pageable: Pageable): Page<Moto> {
 		
 		return motoService.filter(brand, model, tipo, precio_d, precio_u,
-			power_d, power_u, cil_d, cil_u, weight_d, weight_u, year, a2, pageable)
+			power_d, power_u, cil_d, cil_u,
+			weight_d, weight_u, year, license, language,pageable)
 		
 	}
 	
 
 	@GetMapping("/search/{search}")
-	fun search(@PathVariable search: String, pageable: Pageable): Page<Moto> {
-		return motoService.search(search, pageable)
+	fun search(@PathVariable search: String,
+  		       @RequestParam(name = "language", required = false) language: String? = "",
+			   pageable: Pageable): Page<Moto> {
+		return motoService.search(search, language,pageable)
 	}
 	/*
  	## SEARCH METHODS

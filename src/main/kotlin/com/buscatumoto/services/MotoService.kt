@@ -32,6 +32,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.data.domain.PageImpl
 import org.springframework.beans.support.PagedListHolder
+import org.bson.Document
 
 
 @Service//declare this class as a Service "Component specialization"
@@ -42,7 +43,7 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 	/*
  	## SEARCH METHODS
 	 */
-	fun search(search: String, pageable: Pageable): Page<Moto> {
+	fun search(search: String, language: String?, pageable: Pageable): Page<Moto> {
 		
 		
 		var criteria: Criteria = Criteria.where("model").regex(search, "i")
@@ -54,17 +55,16 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 		
 		val total = mongoTemplate.count(queryTotal, Moto::class.java)
 		
-		val pageMoto: Page<Moto> = PageImpl<Moto>(list, pageable, total)		
+		//Translations
+		val documentList: List<Document> = mongoTemplate.findAll(Document::class.java, "html")
+		val motoListTranslated = setTranslations(documentList, list , language)
+		
+		val pageMoto: Page<Moto> = PageImpl<Moto>(motoListTranslated, pageable, total)
+					
 	
 		return pageMoto
 	}
 	
-//	fun searchTotalPages(search: String, pageable: Pageable, page: Int, pageSize: Int): Page<Moto> {
-//		
-//		val pageRequest: PageRequest = PageRequest.of(page - 1, pageSize, Sort.Direction.DESC)
-//		
-//		val result: Page<Moto> = motoDAO.find
-//	}
 	
 		fun filter(
 		brand: String?, model: String?,
@@ -74,6 +74,7 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 		cil_d: Float?, cil_u: Float?,
 		weight_d: Float?, weight_u: Float?,
 		year: Int?, license: String?,
+		language: String?,
 		pageable: Pageable): Page<Moto> {
 		//Filtering
 		var criteria = Criteria()
@@ -150,10 +151,63 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 			
 		val list = mongoTemplate.find(query, Moto::class.java)
 			
-		val result = PageImpl(list, pageable, countTotal)
 			
+		//Translations
+		val documentList: List<Document> = mongoTemplate.findAll(Document::class.java, "html")
+		val motoListTranslated = setTranslations(documentList, list , language)
+						
+		val result = PageImpl(motoListTranslated, pageable, countTotal)
 			
 		return result
+	}
+	
+	/*
+ 	This method modified translatable fields of motoList.
+ 	It searches translations on translation DB filtering through Android language code: "es", "en", "ca"
+	 */
+	private fun setTranslations(documentList: List<Document>, motoList: List<Moto> , languageParam: String?): List<Moto> {
+		
+		var language = ""
+		
+		if(languageParam == null) {
+			language = "English"
+		} else {
+			language = languageParam
+		}
+		 
+		val bikeTypeField = "bikeType$language"
+		val modelHighlightsField = "modelHighlights$language"
+		val modelDetailHighlightsField = "modelDetailtHighlights$language"
+		val priceTitleField = "priceTitle$language"
+		val priceDescField = "priceDes$language"
+		val mainDescField = "mainDesc$language"
+		val licenseTitleField = "licenses_title$language"
+		
+		motoList.forEach {
+			moto ->
+			val id = moto.id
+			
+			val translationRow = documentList.find { it.containsValue("ObjectId($id)") }
+			val bikeTypeTranslation = translationRow?.filter { it.key == bikeTypeField }
+			val modelHighlightsTranslation = translationRow?.filter { it.key == modelHighlightsField }
+			val modelDetailHighlightsTranslation = translationRow?.filter { it.key == modelDetailHighlightsField}
+			val priceTitleTranslation = translationRow?.filter { it.key == priceTitleField }
+			val priceDescTranslation = translationRow?.filter { it.key == priceDescField}
+			val mainDescTranslation = translationRow?.filter { it.key == mainDescField}
+			val licensesTranslation = translationRow?.filter { it.key == licenseTitleField}
+
+			moto.bikeType = bikeTypeTranslation?.get(bikeTypeField).toString()
+			moto.modelHighlights = modelHighlightsTranslation?.get(modelHighlightsField).toString()
+			moto.modelDetailHighlights = modelDetailHighlightsTranslation?.get(modelDetailHighlightsField).toString()
+			moto.priceTitle = priceTitleTranslation?.get(priceTitleField).toString()
+			moto.priceDesc = priceDescTranslation?.get(priceDescField).toString()
+			moto.mainDesc = mainDescTranslation?.get(mainDescField).toString()
+			moto.licensesTitle = licensesTranslation?.get(licenseTitleField).toString()
+				
+		}
+		
+		return motoList
+		
 	}
 	
 	fun getByBrand(brand: String): List<String> {
