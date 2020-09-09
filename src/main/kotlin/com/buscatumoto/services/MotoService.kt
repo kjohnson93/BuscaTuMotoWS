@@ -56,7 +56,7 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 		val total = mongoTemplate.count(queryTotal, Moto::class.java)
 		
 		//Translations
-		val documentList: List<Document> = mongoTemplate.findAll(Document::class.java, "html")
+		val documentList: List<Document> = mongoTemplate.findAll(Document::class.java, "translations")
 		val motoListTranslated = setTranslations(documentList, list , language)
 		
 		val pageMoto: Page<Moto> = PageImpl<Moto>(motoListTranslated, pageable, total)
@@ -153,7 +153,7 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 			
 			
 		//Translations
-		val documentList: List<Document> = mongoTemplate.findAll(Document::class.java, "html")
+		val documentList: List<Document> = mongoTemplate.findAll(Document::class.java, "translations")
 		val motoListTranslated = setTranslations(documentList, list , language)
 						
 		val result = PageImpl(motoListTranslated, pageable, countTotal)
@@ -170,18 +170,18 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 		var language = ""
 		
 		if(languageParam == null) {
-			language = "English"
+			language = "en"
 		} else {
 			language = languageParam
 		}
 		 
-		val bikeTypeField = "bikeType$language"
-		val modelHighlightsField = "modelHighlights$language"
-		val modelDetailHighlightsField = "modelDetailtHighlights$language"
-		val priceTitleField = "priceTitle$language"
-		val priceDescField = "priceDes$language"
-		val mainDescField = "mainDesc$language"
-		val licenseTitleField = "licenses_title$language"
+		val bikeTypeField = "bikeType_$language"
+		val modelHighlightsField = "modelHighlights_$language"
+		val modelDetailHighlightsField = "modelDetailtHighlights_$language"
+		val priceTitleField = "priceTitle_$language"
+		val priceDescField = "priceDes_$language"
+		val mainDescField = "mainDesc_$language"
+		val licenseTitleField = "licenses_title_$language"
 		
 		motoList.forEach {
 			moto ->
