@@ -179,7 +179,7 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 		val modelHighlightsField = "modelHighlights_$language"
 		val modelDetailHighlightsField = "modelDetailtHighlights_$language"
 		val priceTitleField = "priceTitle_$language"
-		val priceDescField = "priceDes_$language"
+		val priceDescField = "priceDesc_$language"
 		val mainDescField = "mainDesc_$language"
 		val licenseTitleField = "licenses_title_$language"
 		
@@ -195,6 +195,7 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 			val priceDescTranslation = translationRow?.filter { it.key == priceDescField}
 			val mainDescTranslation = translationRow?.filter { it.key == mainDescField}
 			val licensesTranslation = translationRow?.filter { it.key == licenseTitleField}
+			
 
 			moto.bikeType = bikeTypeTranslation?.get(bikeTypeField).toString()
 			moto.modelHighlights = modelHighlightsTranslation?.get(modelHighlightsField).toString()
@@ -203,6 +204,28 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 			moto.priceDesc = priceDescTranslation?.get(priceDescField).toString()
 			moto.mainDesc = mainDescTranslation?.get(mainDescField).toString()
 			moto.licensesTitle = licensesTranslation?.get(licenseTitleField).toString()
+			
+			if (moto.bikeType.equals("null")) {
+				moto.bikeType = ""
+			}
+			if (moto.modelHighlights.equals("null")) {
+				moto.modelHighlights = ""
+			}
+			if (moto.modelDetailHighlights.equals("null")) {
+				moto.modelDetailHighlights = ""
+			}
+			if (moto.priceTitle.equals("null")) {
+				moto.priceTitle = ""
+			}
+			if (moto.priceDesc.equals("null")) {
+				moto.priceDesc = ""
+			}
+			if (moto.mainDesc.equals("null")) {
+				moto.mainDesc = ""
+			}
+			if (moto.licensesTitle.equals("null")) {
+				moto.licensesTitle = ""
+			}
 				
 		}
 		
