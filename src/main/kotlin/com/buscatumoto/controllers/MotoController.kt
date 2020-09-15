@@ -58,6 +58,13 @@ class MotoController(val motoService: MotoService) {
 			   pageable: Pageable): Page<Moto> {
 		return motoService.search(search, language,pageable)
 	}
+	
+	@GetMapping("/searchRelated")
+	fun searchRelated(@RequestParam(name = "id") id: String,
+  		       @RequestParam(name = "language", required = false) language: String? = "",
+			   pageable: Pageable): Page<Moto> {
+		return motoService.searchRelated(id, language,pageable)
+	}
 	/*
  	## SEARCH METHODS
 	 */
