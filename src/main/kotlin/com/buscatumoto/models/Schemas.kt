@@ -17,8 +17,6 @@ data class Moto(@Id var id: String? = null, var bikeType: String = "", var brand
 					var priceDesc: String = "",var mainDesc: String = "",
 					var licenses: List<String> = emptyList(),
 					@Field("licenses_title") var licensesTitle: String = "",
-					@Field("specs_title") var specsTitle: String = "",
-					@Field("specs_table") var specsTable: List<List<String>> = emptyList(),
 					@Field("relatedItems") var relatedItems: List<String> = emptyList(),
 					@Field("relatedItemsUrl") var relatedItemsUrl: List<String> = emptyList()) {
 }
