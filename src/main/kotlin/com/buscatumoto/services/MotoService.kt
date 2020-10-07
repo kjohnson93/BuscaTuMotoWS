@@ -48,106 +48,105 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 
 		var criteria: Criteria = Criteria.where("model").regex(search, "i")
 
-				var queryTotal = Query(criteria)
-				var query = Query(criteria).with(pageable)
+		var queryTotal = Query(criteria)
+		var query = Query(criteria).with(pageable)
 
-				val list = mongoTemplate.find(query, Moto::class.java)
+		val list = mongoTemplate.find(query, Moto::class.java)
 
-				val total = mongoTemplate.count(queryTotal, Moto::class.java)
+		val total = mongoTemplate.count(queryTotal, Moto::class.java)
 
-				//Translations
-				val documentList: List<Document> = mongoTemplate.findAll(Document::class.java, "translations")
-				val motoListTranslated = setTranslations(documentList, list , language)
+		//Translations
+		val documentList: List<Document> = mongoTemplate.findAll(Document::class.java, "translations")
+		val motoListTranslated = setTranslations(documentList, list, language)
 
-				val pageMoto: Page<Moto> = PageImpl<Moto>(motoListTranslated, pageable, total)
+		val pageMoto: Page<Moto> = PageImpl<Moto>(motoListTranslated, pageable, total)
 
 
-				return pageMoto
+		return pageMoto
 	}
 
 	fun searchRelated(idMoto: String, language: String?, pageable: Pageable): Page<Moto> {
 
-		val resultList : ArrayList<Moto> = ArrayList()
+		val resultList: ArrayList<Moto> = ArrayList()
 
 
-
-				var criteria = Criteria()
-
-
-				idMoto?.let {
-		criteria.and("_id").`is`(idMoto)
-	}
-
-	var queryTotal = Query(criteria)
-			var query = Query(criteria).with(pageable)
-
-			val motoResult = mongoTemplate.find(query, Moto::class.java)
-
-			val total = mongoTemplate.count(queryTotal, Moto::class.java)
-
-			if (motoResult.isNotEmpty()) {
-				val motoEntity = motoResult.elementAt(0)
+		var criteria = Criteria()
 
 
-						val relatedItems = motoEntity.relatedItems
+		idMoto?.let {
+			criteria.and("_id").`is`(idMoto)
+		}
 
-						relatedItems.forEachIndexed {
-					index, element ->
-					//Odd index means that in related array there is value we are not interested. We interested in the pair indexes
-					if (index % 2 == 1) {
-						//do nothinf
-					} else {
-						//query to obtain first element of that search
-						var criteriaRelatedItem: Criteria = Criteria.where("model").regex(element, "i")
+		var queryTotal = Query(criteria)
+		var query = Query(criteria).with(pageable)
 
-								var queryTotalRelated = Query(criteriaRelatedItem)
-								var queryRelated = Query(criteriaRelatedItem).with(pageable)
+		val motoResult = mongoTemplate.find(query, Moto::class.java)
 
-								val list = mongoTemplate.find(queryRelated, Moto::class.java)
+		val total = mongoTemplate.count(queryTotal, Moto::class.java)
 
-								if (list.isNotEmpty()) {
-									val relatedMoto = list.elementAt(0)
-											resultList.add(relatedMoto)
-								}
+		if (motoResult.isNotEmpty()) {
+			val motoEntity = motoResult.elementAt(0)
+
+
+			val relatedItems = motoEntity.relatedItems
+
+			relatedItems.forEachIndexed { index, element ->
+				//Odd index means that in related array there is value we are not interested. We interested in the pair indexes
+				if (index % 2 == 1) {
+					//do nothinf
+				} else {
+					//query to obtain first element of that search
+					var criteriaRelatedItem: Criteria = Criteria.where("model").regex(element, "i")
+
+					var queryTotalRelated = Query(criteriaRelatedItem)
+					var queryRelated = Query(criteriaRelatedItem).with(pageable)
+
+					val list = mongoTemplate.find(queryRelated, Moto::class.java)
+
+					if (list.isNotEmpty()) {
+						val relatedMoto = list.elementAt(0)
+						resultList.add(relatedMoto)
 					}
-				}	
+				}
 			}
+		}
 
 
-	//Translations
-	val documentList: List<Document> = mongoTemplate.findAll(Document::class.java, "translations")
-			val motoListTranslated = setTranslations(documentList, resultList , language)
+		//Translations
+		val documentList: List<Document> = mongoTemplate.findAll(Document::class.java, "translations")
+		val motoListTranslated = setTranslations(documentList, resultList, language)
 
-			val pageMoto: Page<Moto> = PageImpl<Moto>(motoListTranslated, pageable, total)
+		val pageMoto: Page<Moto> = PageImpl<Moto>(motoListTranslated, pageable, total)
 
 
-			return pageMoto
+		return pageMoto
 	}
 
 
 	fun filter(
-			brand: String?, model: String?,
-					tipo: String?,
-							precio_d: Int?, precio_u: Int?,
-									power_d: Float?, power_u: Float?,
-											cil_d: Float?, cil_u: Float?,
-													weight_d: Float?, weight_u: Float?,
-															year: Int?, license: String?,
-																	language: String?,
-																			pageable: Pageable): Page<Moto> {
+		brand: String?, model: String?,
+		tipo: String?,
+		precio_d: Int?, precio_u: Int?,
+		power_d: Float?, power_u: Float?,
+		cil_d: Float?, cil_u: Float?,
+		weight_d: Float?, weight_u: Float?,
+		year: Int?, license: String?,
+		language: String?,
+		pageable: Pageable
+	): Page<Moto> {
 		//Filtering
 		var criteria = Criteria()
-				var criteriaPriceD = Criteria()
-				var criteriaPriceU = Criteria()
-				var criteriaPowerD = Criteria()
-				var criteriaPowerU = Criteria()
-				var criteriaCilD = Criteria()
-				var criteriaCilU = Criteria()
-				var criteriaWeightD = Criteria()
-				var criteriaWeightU = Criteria()
+		var criteriaPriceD = Criteria()
+		var criteriaPriceU = Criteria()
+		var criteriaPowerD = Criteria()
+		var criteriaPowerU = Criteria()
+		var criteriaCilD = Criteria()
+		var criteriaCilU = Criteria()
+		var criteriaWeightD = Criteria()
+		var criteriaWeightU = Criteria()
 
 
-				brand?.let {
+		brand?.let {
 			criteria.and("brand").`is`(brand)
 		}
 
@@ -188,11 +187,11 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 		}
 
 		criteria.andOperator(
-				criteriaPriceD, criteriaPriceU,
-				criteriaPowerD, criteriaPowerU,
-				criteriaCilD, criteriaCilU,
-				criteriaWeightD, criteriaWeightU
-				)
+			criteriaPriceD, criteriaPriceU,
+			criteriaPowerD, criteriaPowerU,
+			criteriaCilD, criteriaCilU,
+			criteriaWeightD, criteriaWeightU
+		)
 
 		year?.let {
 			criteria.and("year").`is`(year)
@@ -205,68 +204,71 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 
 		var query = Query(criteria).with(pageable)
 
-				var queryTotal = Query(criteria)
-				val countTotal = mongoTemplate.count(queryTotal, Moto::class.java)
+		var queryTotal = Query(criteria)
+		val countTotal = mongoTemplate.count(queryTotal, Moto::class.java)
 
-				val list = mongoTemplate.find(query, Moto::class.java)
+		val list = mongoTemplate.find(query, Moto::class.java)
 
 
-				//Translations
-				val documentList: List<Document> = mongoTemplate.findAll(Document::class.java, "translations")
-				val motoListTranslated = setTranslations(documentList, list , language)
+		//Translations
+		val documentList: List<Document> = mongoTemplate.findAll(Document::class.java, "translations")
+		val motoListTranslated = setTranslations(documentList, list, language)
 
-				val result = PageImpl(motoListTranslated, pageable, countTotal)
+		val result = PageImpl(motoListTranslated, pageable, countTotal)
 
-				return result
+		return result
 	}
 
 	/*
  	This method modified translatable fields of motoList.
  	It searches translations on translation DB filtering through Android language code: "es", "en", "ca"
 	 */
-	private fun setTranslations(documentList: List<Document>, motoList: List<Moto> , languageParam: String?): List<Moto> {
+	private fun setTranslations(
+		documentList: List<Document>,
+		motoList: List<Moto>,
+		languageParam: String?
+	): List<Moto> {
 
 		var language = ""
 
-				if(languageParam == null) {
-					language = "en"
-				} else {
-					language = languageParam
-				}
+		if (languageParam == null) {
+			language = "en"
+		} else {
+			language = languageParam
+		}
 
 		val bikeTypeField = "bikeType_$language"
-				val modelHighlightsField = "modelHighlights_$language"
-				val modelDetailHighlightsField = "modelDetailtHighlights_$language"
-				val priceTitleField = "priceTitle_$language"
-				val priceDescField = "priceDesc_$language"
-				val mainDescField = "mainDesc_$language"
-				val licenseTitleField = "licenses_title_$language"
+		val modelHighlightsField = "modelHighlights_$language"
+		val modelDetailHighlightsField = "modelDetailtHighlights_$language"
+		val priceTitleField = "priceTitle_$language"
+		val priceDescField = "priceDesc_$language"
+		val mainDescField = "mainDesc_$language"
+		val licenseTitleField = "licenses_title_$language"
 
-				motoList.forEach {
-			moto ->
+		motoList.forEach { moto ->
 			val id = moto.id
 
 			val translationRow = documentList.find { it.containsValue("ObjectId($id)") }
 			val bikeTypeTranslation = translationRow?.filter { it.key == bikeTypeField }
 			val modelHighlightsTranslation = translationRow?.filter { it.key == modelHighlightsField }
-			val modelDetailHighlightsTranslation = translationRow?.filter { it.key == modelDetailHighlightsField}
+			val modelDetailHighlightsTranslation = translationRow?.filter { it.key == modelDetailHighlightsField }
 			val priceTitleTranslation = translationRow?.filter { it.key == priceTitleField }
-			val priceDescTranslation = translationRow?.filter { it.key == priceDescField}
-			val mainDescTranslation = translationRow?.filter { it.key == mainDescField}
-			val licensesTranslation = translationRow?.filter { it.key == licenseTitleField}
+			val priceDescTranslation = translationRow?.filter { it.key == priceDescField }
+			val mainDescTranslation = translationRow?.filter { it.key == mainDescField }
+			val licensesTranslation = translationRow?.filter { it.key == licenseTitleField }
 
 
 			moto.bikeType = bikeTypeTranslation?.get(bikeTypeField).toString()
-					moto.modelHighlights = modelHighlightsTranslation?.get(modelHighlightsField).toString()
-							moto.modelDetailHighlights = modelDetailHighlightsTranslation?.get(modelDetailHighlightsField).toString()
-									moto.priceTitle = priceTitleTranslation?.get(priceTitleField).toString()
-											moto.priceDesc = priceDescTranslation?.get(priceDescField).toString()
-													moto.mainDesc = mainDescTranslation?.get(mainDescField).toString()
-															moto.licensesTitle = licensesTranslation?.get(licenseTitleField).toString()
+			moto.modelHighlights = modelHighlightsTranslation?.get(modelHighlightsField).toString()
+			moto.modelDetailHighlights = modelDetailHighlightsTranslation?.get(modelDetailHighlightsField).toString()
+			moto.priceTitle = priceTitleTranslation?.get(priceTitleField).toString()
+			moto.priceDesc = priceDescTranslation?.get(priceDescField).toString()
+			moto.mainDesc = mainDescTranslation?.get(mainDescField).toString()
+			moto.licensesTitle = licensesTranslation?.get(licenseTitleField).toString()
 
-																	if (moto.bikeType.equals("null")) {
-																		moto.bikeType = ""
-																	}
+			if (moto.bikeType.equals("null")) {
+				moto.bikeType = ""
+			}
 			if (moto.modelHighlights.equals("null")) {
 				moto.modelHighlights = ""
 			}
@@ -295,18 +297,17 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 	fun getByBrand(brand: String): List<String> {
 
 		var criteria: Criteria = Criteria.where("brand").`is`(brand)
-				var query = Query(criteria)
-				val result = mongoTemplate.find(query, Moto::class.java)
+		var query = Query(criteria)
+		val result = mongoTemplate.find(query, Moto::class.java)
 
-				val list = ArrayList<String>()
+		val list = ArrayList<String>()
 
-				result.forEach {
-		element ->
+		result.forEach { element ->
 
-		list.add(element.model)
-	}
+			list.add(element.model)
+		}
 
-	return list
+		return list
 	}
 
 
@@ -323,51 +324,51 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 	fun getFilterFormFields(): MotoFieldResponse {
 		var result = MotoFieldResponse()
 
-				val brands = getBrands()
-				val bikeTypes = getBikeTypes()
+		val brands = getBrands()
+		val bikeTypes = getBikeTypes()
 
-				var priceMin = getPriceMin()
-				var priceMax = getPriceMax()
-				var powerMin = getPowerMin()
-				var powerMax = getPowerMax()
-				var cilMin = getCilMin()
-				var cilMax = getCilMax()
-				var weightMin = getWeightMin()
-				var weightMax = getWeightMax()
-				var years = getYears()
-				var licenses = getLicenses()
+		var priceMin = getPriceMin()
+		var priceMax = getPriceMax()
+		var powerMin = getPowerMin()
+		var powerMax = getPowerMax()
+		var cilMin = getCilMin()
+		var cilMax = getCilMax()
+		var weightMin = getWeightMin()
+		var weightMax = getWeightMax()
+		var years = getYears()
+		var licenses = getLicenses()
 
-				result.respuesta = "OK"
-				result.brandList = brands
-				result.bikeTypesList = bikeTypes
-				result.priceMinList = priceMin
-				result.priceMaxList = priceMax
-				result.powerMinList = powerMin
-				result.powerMaxList = powerMax
-				result.cilMinList = cilMin
-				result.cilMaxList = cilMax
-				result.weightMinList = weightMin
-				result.weightMaxList = weightMax
-				result.yearList = years
-				result.licenses = licenses
+		result.respuesta = "OK"
+		result.brandList = brands
+		result.bikeTypesList = bikeTypes
+		result.priceMinList = priceMin
+		result.priceMaxList = priceMax
+		result.powerMinList = powerMin
+		result.powerMaxList = powerMax
+		result.cilMinList = cilMin
+		result.cilMaxList = cilMax
+		result.weightMinList = weightMin
+		result.weightMaxList = weightMax
+		result.yearList = years
+		result.licenses = licenses
 
-				return result
+		return result
 	}
 
 	//get brands
 	fun getBrands(): List<String> {
 		val result = mongoTemplate.findDistinct("brand", Moto::class.java, String::class.java)
-				result.sort()
+		result.sort()
 
-				return result
+		return result
 	}
 
 	//get bikeTypes
 	fun getBikeTypes(): List<String> {
 		val result = mongoTemplate.findDistinct("bikeType", Moto::class.java, String::class.java)
-				result.sort()
+		result.sort()
 
-				return result
+		return result
 	}
 
 	//get prices minumum spinner values
@@ -378,7 +379,7 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 	//get prices maximun spinner values
 	fun getPriceMax(): List<Int> {
 		return mongoTemplate.findDistinct("priceMax", MotoField::class.java, Int::class.java)
-	}	
+	}
 
 	//get power minimum spinner values
 	fun getPowerMin(): List<Float> {
@@ -399,6 +400,7 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 	fun getCilMax(): List<Float> {
 		return mongoTemplate.findDistinct("cilMax", MotoField::class.java, Float::class.java)
 	}
+
 	//get weight minimum spinner values
 	fun getWeightMin(): List<Float> {
 		return mongoTemplate.findDistinct("weightMin", MotoField::class.java, Float::class.java)
@@ -412,13 +414,13 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 	//get year spinner values. Gets all years in db, except for years greaters than current one.
 	fun getYears(): List<Int> {
 		val result = mongoTemplate.findDistinct("year", Moto::class.java, Int::class.java)
-				result.sort()
+		result.sort()
 
-				val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+		val currentYear = Calendar.getInstance().get(Calendar.YEAR)
 
-				val yearsToRemove = ArrayList<Int>()
+		val yearsToRemove = ArrayList<Int>()
 
-				result.forEach {
+		result.forEach {
 			if (it > currentYear) {
 				yearsToRemove.add(it)
 			}
@@ -440,15 +442,19 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 
 		val result = mongoTemplate.findDistinct("licenses", MotoField::class.java, String::class.java)
 
-				val aux0 = result[0]
-						result[0] = result[2]
-								result[2] = aux0
+		if (!result.isEmpty()) {
+			val aux0 = result[0]
+			result[0] = result[2]
+			result[2] = aux0
 
-								val aux1 = result[1]
-										result[1] = result[3]
-												result[3] = aux1
+			val aux1 = result[1]
+			result[1] = result[3]
+			result[3] = aux1
+		} else {
+			println(result)
+		}
 
-												return result
+		return result
 	}
 
 
@@ -477,13 +483,12 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 	}
 
 
-
 	fun getByBikeType(bikeType: String): List<Moto> {
 		var criteria: Criteria = Criteria.where("bikeType").`is`(bikeType)
-				var query = Query(criteria)
-				val result = mongoTemplate.find(query, Moto::class.java)
+		var query = Query(criteria)
+		val result = mongoTemplate.find(query, Moto::class.java)
 
-				return result
+		return result
 	}
 
 
@@ -491,14 +496,14 @@ class MotoService(val branDAO: BrandDAO, val motoDAO: MotoDAO, val mongoTemplate
 	fun getLicenseTitle(id: String): String {
 
 		var criteria: Criteria = Criteria.where("id").`is`(id)
-				var query = Query(criteria)
-				val result = mongoTemplate.findOne(query, Moto::class.java)
+		var query = Query(criteria)
+		val result = mongoTemplate.findOne(query, Moto::class.java)
 
-				result?.let {
-		return it.licensesTitle
-	} ?: run {
-		return ""
-	}
+		result?.let {
+			return it.licensesTitle
+		} ?: run {
+			return ""
+		}
 
 
 	}
